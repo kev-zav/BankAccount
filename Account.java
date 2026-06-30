@@ -19,15 +19,17 @@ public class Account {
     public String getAccountType() {
         return accountType;
     }
-    public void withdraw(double withdrawalAmount) {
-        balance = balance - withdrawalAmount;
-        System.out.println("Your new balance is: " + balance);
+    public void withdraw(double withdrawAmount) {
+        balance = balance - withdrawAmount;
+        System.out.println("Withdrawal successful.");
+        System.out.println("Your new available balance is: " + balance);
     }
     public void deposit(double depositAmount) {
         balance = balance + depositAmount;
-        System.out.println("Your new balance is: " + balance);
+        System.out.println("Deposit succesful.");
+        System.out.println("Your new available balance is: " + balance);
     }
     public void checkBalance() {
-        System.out.println("Your balance is: " + balance);
+        System.out.println("Your available balance is: " + balance);
     }
 }
