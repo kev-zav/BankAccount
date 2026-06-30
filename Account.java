@@ -22,14 +22,14 @@ public class Account {
     public void withdraw(double withdrawAmount) {
         balance = balance - withdrawAmount;
         System.out.println("Withdrawal successful.");
-        System.out.println("Your new available balance is: " + balance);
+        System.out.println("Your new available balance is: $" + balance);
     }
     public void deposit(double depositAmount) {
         balance = balance + depositAmount;
         System.out.println("Deposit succesful.");
-        System.out.println("Your new available balance is: " + balance);
+        System.out.println("Your new available balance is: $" + balance);
     }
     public void checkBalance() {
-        System.out.println("Your available balance is: " + balance);
+        System.out.println("Your available balance is: $" + balance);
     }
 }

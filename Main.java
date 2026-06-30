@@ -1,5 +1,7 @@
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.io.FileWriter;
+import java.io.File;
 
 public class Main {
     public static void main(String[] args) {
@@ -7,6 +9,26 @@ public class Main {
 
         Scanner scanner = new Scanner(System.in);
         boolean running = true;
+        try{ 
+            Scanner fileScanner = new Scanner(new File("cust_database.txt"));
+            while (fileScanner.hasNextLine()) {
+                String line = fileScanner.nextLine();
+                String[] parts = line.split(",");
+                Customer c = new Customer(parts[0], parts[1], parts[2]);
+                while (fileScanner.hasNextLine()) {
+                    String accountLine = fileScanner.nextLine();
+                    if (accountLine.equals("END")) break;
+                    String[] accountParts = accountLine.split(",");
+                    Account a = new Account(Double.parseDouble(accountParts[2]), accountParts[0], accountParts[1]);
+                    c.addAccount(a);
+                }
+                customers.add(c);
+            }
+            fileScanner.close();
+        } catch (Exception e) {
+            System.out.println("No existing data found.");
+        }
+        System.out.println("Customers loaded: " + customers.size());
         while (running) {
             System.out.println("1. View customer profile");
             System.out.println("2. Open account");
@@ -52,10 +74,12 @@ public class Main {
                         String name = scanner.nextLine();
                         System.out.println("Enter customer date of birth: ");
                         String dob = scanner.nextLine();
-                        Customer c = new Customer(name, searchCif, dob);
-                        customers.add(c);
                         System.out.println("What account would the customer like to open: ");
                         String accountType = scanner.nextLine();
+                        if (!accountType.equals("Savings") && !accountType.equals("Checking")) {
+                            System.out.println("Enter a valid account type. (Checking or Savings)");
+                            break;
+                        }
                         System.out.println("Assign a 9 digit number to the account");
                         String searchAccountNumber = scanner.nextLine();
                         found = false;
@@ -75,9 +99,15 @@ public class Main {
                             break;
                         } else {
                             System.out.println("What is the opening balance of the account?");
-                            double balance = Double.parseDouble(scanner.nextLine());
-                            Account a = new Account(balance, searchAccountNumber, accountType);
-                            c.addAccount(a);
+                            try {
+                                double balance = Double.parseDouble(scanner.nextLine());
+                                Account a = new Account(balance, searchAccountNumber, accountType);
+                                Customer c = new Customer(name, searchCif, dob);
+                                customers.add(c);
+                                c.addAccount(a);
+                            } catch (NumberFormatException e) {
+                                System.out.println("Invalid balance. Please enter a number.");
+                            }
                             break;
                         }
                     }
@@ -152,6 +182,19 @@ public class Main {
                 }
 
                 case 6:
+                    try {
+                        FileWriter fw = new FileWriter("cust_database.txt");
+                        for (Customer c : customers) {
+                            fw.write(c.getName() + "," + c.getCif() + "," + c.getDob() + "\n");
+                            for (Account a : c.getAccount()) {
+                                fw.write(a.getAccountNumber() + "," + a.getAccountType() + "," + a.getBalance() + "\n");
+                            }
+                            fw.write("END\n");
+                        }
+                        fw.close();
+                    } catch (Exception e) {
+                        System.out.println("Error saving data.");
+                    }
                     running = false;
                     break;
             }
